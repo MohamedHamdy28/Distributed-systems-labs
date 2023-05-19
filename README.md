@@ -187,6 +187,94 @@ Okay, now the network is up, we can try to store key-value data.
 ```
 ![image](https://github.com/MohamedHamdy28/Distributed-systems-labs/assets/71794972/1cbf4f7c-a214-4f5f-ac84-bc82f5c24471)
 
+# Lab 6, implement RAFT (Leader election)
+
+In this assignment you have to implement a part of RAFT protocol.
+This part is a leader election.
+To do so, you must use gRPC.
+
+### Term
+
+- The life cycle of the system is divided into terms.
+- Each term starts with the election.
+- Term number is starting at 0 and increases by 1 each term (in election round).
+
+### Configuration file
+
+- Contains information about the system in the format: id address port.
+- The number of lines means the number of servers (nodes) in the system.
+- Has the name config.conf.
+
+## Server
+
+Server has its own:
+1. term number - 0 at the startup. Increases by 1 in each election round.
+2. timer - initialized at the startup with a random value in the range [150, 300] ms.
+3. Information about other servers: their total number, and their addresses (from config file).
+
+### Startup
+
+Has one command line argument: id.
+
+At the start, server reads the config file, finds the corresponding address and the port number, and binds to it. Also, it prints the address and port to which it is bound.
+
+### States
+Three possible states: Follower, Candidate or Leader
+
+**Note:** reset timer means it start counting from the beginning. It does not re-initilize timer with a new random timeout.
+
+**Important:** If server receives a term number greater than its own (in any message), it should update its term
+number.
+
+Follower - the initial state of the server.
+
+- Every time Follower receives any message from the Leader, it resets the timer.
+- If the timer is expired, Follower becomes a Candidate.
+- If it receives a RequestVote message, it must vote for a given Candidate, if it has not already voted in that term. I.e. it can vote only once in a single term.
+
+  
+Candidate - trying to become a leader.
+
+- First, it increments its term number and resets its timer.
+- Then, it requests votes from all other nodes. Also, this Candidate votes for itself.
+
+Possible outcomes:
+
+1. If it has the majority of votes before its timer is up, the Candidate becomes a Leader.
+2. If the timer is up, and the Candidate does not have the majority of votes, it generates a new timer (with the new random time) and becomes a Follower.
+3. If the Candidate receives the message (any message) with the term number greater than its own, it stops the election and becomes a Follower. Also, it should update its term number with received term in this case.
+  
+Leader - runs the system.
+
+- Every 50 milliseconds sends an AppendEntries request to all other servers. This is the heartbeat message.
+
+- If the Leader receives a heartbeat message from another Leader with the term number greater than its own, it becomes a Follower (and also sets its term number to the new leader's one).
+
+### Functions
+The server has the following RPC functions:
+1. RequestVote
+2. AppendEntries
+3. GetLeader
+4. Suspend
+
+the rest can be found here: https://drive.google.com/file/d/1YgoiEwFIrmI5VEI0RPpgE5VJE0bkZY1p/view?usp=sharing
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
