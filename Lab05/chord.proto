@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+service ChordServices{
+    rpc register(register_input) returns (register_output);
+    rpc deregister(deregister_input) returns (deregister_output);
+    rpc populate_finger_table(pft_input) returns (pft_output);
+    rpc get_chord_info(gci_input) returns (gci_output);
+    rpc save(save_input) returns (save_output);
+    rpc remove(remove_input) returns(remove_output);
+    rpc find(find_input) returns(find_output);
+    rpc deligate_ids(deligate_input) returns(deligate_output);
+    rpc connection_type(connection_type_input) returns(connection_type_output);
+    rpc get_finger_table(gft_input) returns(gft_output);
+}
+
+message register_input{
+    string ipaddr = 1;
+    string port = 2;
+}
+
+message register_output{
+    int32 id = 1;
+    string m = 2;
+}
+
+message deregister_input{
+    int32 id = 1;
+}
+
+message deregister_output{
+    bool state = 1;
+    string message = 2;
+}
+
+message pft_input{
+    int32 id = 1;
+}
+
+message pft_output{
+    int32 predecessor = 1;
+    repeated string finger_table = 2;
+}
+
+message gci_input{}
+
+message gci_output{
+    repeated string info = 1;
+}
+
+message save_input{
+    string key = 1;
+    string text = 2;
+}
+
+message save_output{
+    bool state = 1;
+    string message = 2;
+}
+
+message remove_input{
+    string key = 1;
+}
+
+message remove_output{
+    bool state = 1;
+    string message = 2;
+}
+
+message find_input{
+    string key = 1;
+}
+
+message find_output{
+    bool state = 1;
+    int32 id = 2;
+    string addr = 3;
+    string message = 4;
+}
+
+message deligate_input{
+    repeated int32 ids = 1;
+}
+
+message deligate_output{
+    repeated int32 key = 1;
+    repeated string text = 2;
+}
+
+message connection_type_input{}
+
+message connection_type_output{
+    string type = 1;
+}
+
+message gft_input{}
+
+message gft_output{
+    int32 id = 1;
+    repeated string finger_table = 2;
+}

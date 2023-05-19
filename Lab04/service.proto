@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+service Reverse{
+    rpc reverse(reverse_input) returns (reverse_output);
+}
+
+message reverse_input{
+    string text = 1;
+}
+
+message reverse_output{
+    string message = 1;
+}
+
+service Split{
+    rpc split(split_input) returns (split_output);
+}
+
+message split_input{
+    string text = 1;
+    string delim = 2;
+}
+
+message split_output{
+    int32 n = 1;
+    repeated string text = 2;
+}
+
+service Isprime{
+    rpc isprime(stream isprime_input) returns (stream isprime_output);
+}
+
+message isprime_input{
+    int32 num = 1;
+}
+
+message isprime_output{
+    string text = 1;
+}
